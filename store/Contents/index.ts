@@ -65,7 +65,7 @@ export default class MyModule extends VuexModule {
       const { data } = await ContentService.fetchAllContents()
       return data.data.contents
     } catch (error) {
-      console.error(error)
+      alert(error)
     } finally {
       this.context.commit('SET_LOADING_ALL_CONTENTS', false)
     }
@@ -78,7 +78,7 @@ export default class MyModule extends VuexModule {
       const { data } = await ContentService.fetchContentId(idContent)
       return data.data.getContent
     } catch (error) {
-      console.error(error)
+      alert(error)
     } finally {
       this.context.commit('SET_LOADING_CONTENT', false)
     }

@@ -43,8 +43,8 @@ export default {
   fontawesome: {
     icons: {
       solid: true,
-      brands: true
-    }
+      brands: true,
+    },
   },
 
   // Axios module configuration: https://go.nuxtjs.dev/config-axios

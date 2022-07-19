@@ -7,7 +7,12 @@
         <span class="header-content fw-600">LGPD</span>
       </div>
       <div>
-        <img src="~/assets/images/lgpd.png" class="header-imagen" alt="" srcset="" />
+        <img
+          src="~/assets/images/lgpd.png"
+          class="header-imagen"
+          alt=""
+          srcset=""
+        />
       </div>
     </header>
   </div>

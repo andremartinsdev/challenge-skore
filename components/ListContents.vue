@@ -66,7 +66,6 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-
 .content-transition-enter-active,
 .content-transition-leave-active {
   transition: opacity 0.8s;

@@ -10,9 +10,8 @@
               <div class="content-header-icon">
                 <NuxtLink to="/content" style="" class="button-back">
                   <img
-                    height="30px"
                     src="~/assets/images/arrow-back.gif"
-                    alt=""
+                    alt="Seta branca com animação, apontando para esquerda, utilizada para voltar para a tela de listagem"
                     srcset=""
                   />
                 </NuxtLink>
@@ -22,7 +21,10 @@
               </div>
 
               <div class="content-header-search">
-                <img src="~/assets/images/search.gif" alt="" />
+                <img
+                  src="~/assets/images/search.gif"
+                  alt="Lupa branca com animação, utilizada para pesquisar sobre o assunto listado"
+                />
 
                 <a class="search-link" @click="searchAbout"
                   >Mais conteúdo sobre o assunto</a
@@ -45,7 +47,10 @@
                     v-else-if="content.type === 'image'"
                     class="content-image"
                   >
-                    <img :src="content.url" alt="" />
+                    <img
+                      :src="content.url"
+                      alt="imagem referente ao conteudo"
+                    />
                   </div>
                   <div
                     v-else-if="
@@ -53,13 +58,11 @@
                     "
                     class="content-link"
                   >
-                    <img src="~/assets/images/navigation.webp" alt="" />
-                    <span class="link" @click="navigate"
-                      >Visitar Site
-                      <span class="icon is-left">
-                        <!-- <fontawesomeicon :icon="['fa', 'arrow-pointer']" /> -->
-                      </span>
-                    </span>
+                    <img
+                      src="~/assets/images/navigation.webp"
+                      alt="imagem demonstrando pessoas conectadas a internet de varias formas, todas em torno de um globo que é análogo a internet"
+                    />
+                    <span class="link" @click="navigate">Visitar Site </span>
                   </div>
                 </div>
               </div>
@@ -147,7 +150,7 @@ export default Vue.extend({
 
     async fetchContentId() {
       await this.getContentId(this.$route.params.id)
-      this.content = this.contentGetter;
+      this.content = this.contentGetter
     },
 
     navigate() {
@@ -232,7 +235,6 @@ section {
       }
 
       .button-back {
-        width: 65%;
         font-size: 30px;
         display: flex;
         align-self: center;
@@ -304,6 +306,11 @@ section {
 
           .link {
             cursor: pointer;
+            transition: all 0.5s;
+            &:hover {
+              color: #2b66b9;
+              font-size: 18px;
+            }
           }
           span .icon {
             margin-left: 10px;
@@ -398,18 +405,6 @@ section {
         }
       }
     }
-  }
-  ::-webkit-scrollbar {
-    width: 2px;
-  }
-
-  ::-webkit-scrollbar-track {
-    background: #1e3c72;
-  }
-
-  ::-webkit-scrollbar-thumb {
-    background: #f3f3f35b;
-    border-radius: 5px;
   }
 }
 </style>

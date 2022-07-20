@@ -1,14 +1,38 @@
 .fw-300 {
-    font-weight: 200;
-  }
-  
-  .fw-400 {
-    font-weight: 400;
-  }
-  
-  .fw-600 {
-    font-weight: 600;
-  }
+  font-weight: 200;
+}
 
+.fw-400 {
+  font-weight: 400;
+}
 
-  $sec: #fffffe;
+.fw-600 {
+  font-weight: 600;
+}
+
+$sec: #fffffe;
+
+.content-transition-enter-active,
+.content-transition-leave-active {
+  transition: opacity 0.8s;
+}
+.content-transition-enter,
+.content-transition-leave-active {
+  opacity: 0;
+}
+
+@mixin for-phone-only {
+  @media (max-width: 800px) { @content; }
+}
+@mixin for-tablet-portrait-up {
+  @media (min-width: 600px) { @content; }
+}
+@mixin for-tablet-landscape-up {
+  @media (min-width: 900px) { @content; }
+}
+@mixin for-desktop-up {
+  @media (min-width: 1200px) { @content; }
+}
+@mixin for-big-desktop-up {
+  @media (min-width: 1800px) { @content; }
+}

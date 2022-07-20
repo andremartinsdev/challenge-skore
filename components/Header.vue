@@ -7,7 +7,12 @@
         <span class="header-content fw-600">LGPD</span>
       </div>
       <div>
-        <img src="~/assets/images/lgpd.png" class="header-imagen" alt="" srcset="" />
+        <img
+          src="~/assets/images/lgpd.png"
+          class="header-imagen"
+          alt=""
+          srcset=""
+        />
       </div>
     </header>
   </div>
@@ -35,6 +40,19 @@ header {
 
   img {
     width: 150px;
+  }
+}
+
+@include for-phone-only {
+  header {
+    width: 100%;
+    img {
+      width: 100px;
+    }
+    .header-content {
+      font-size: 25px;
+      margin: 5px;
+    }
   }
 }
 </style>

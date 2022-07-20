@@ -1,25 +1,10 @@
-import { Module, VuexModule, Mutation, Action } from 'vuex-module-decorators'
+import { GetterTree, ActionTree, MutationTree } from 'vuex'
 import ContentService from '../../services/contents'
-export interface IContent {
-  id: string
-  title: string
-  type: string
-  url: string
-  embeddable: boolean
-  allow_download: boolean
-  description: string
-  created_at: number
-  updated_at: number
-}
+import { IContentState, IContent } from '~/common/types/content'
 
-@Module({
-  name: 'Contents',
-  stateFactory: true,
-  namespaced: true,
-})
-export default class MyModule extends VuexModule {
-  allContents: IContent[] = []
-  content: IContent = {
+export const state = (): IContentState => ({
+  allContents: [],
+  content: {
     id: '',
     title: '',
     type: '',
@@ -29,58 +14,71 @@ export default class MyModule extends VuexModule {
     description: '',
     created_at: 0,
     updated_at: 0,
-  }
+  },
+  loadingAllContents: false,
+  loadingContent: false,
+})
 
-  loadingAllContents: boolean = false
-  loadingContent: boolean = false
+export type RootState = ReturnType<typeof state>
 
-  @Mutation
-  SET_ALL_CONTENTS(contents: IContent[]) {
-    this.allContents = contents
-  }
+export const getters: GetterTree<RootState, RootState> = {
+  allContentsGetter: (state): IContent[] => state.allContents,
+  contentGetter: (state): IContent => state.content,
+  orderbyDateGetter: (state): IContent[] => {
+    const contentsSorted = [...state.allContents]
+    contentsSorted.sort((dateA, dateB) => dateA.created_at - dateB.created_at)
+    return contentsSorted
+  },
 
-  @Mutation
-  SET_CONTENT(content: IContent) {
-    this.content = content
-  }
+  orderbyDateMinorGetter: (state): IContent[] => {
+    const contentsSorted = [...state.allContents]
+    contentsSorted.sort((a, b) => {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    })
+    return contentsSorted
+  },
+}
 
-  @Mutation
-  SET_LOADING_CONTENT(loading: boolean) {
-    this.loadingContent = loading
-  }
+export const mutations: MutationTree<RootState> = {
+  SET_ALL_CONTENTS: (state, allContents: IContent[]) => {
+    state.allContents = allContents
+  },
 
-  @Mutation
-  SET_LOADING_ALL_CONTENTS(loading: boolean) {
-    this.loadingAllContents = loading
-  }
+  SET_CONTENT: (state, content: IContent) => {
+    state.content = content
+  },
 
-  get getterAllContents() {
-    return this.allContents
-  }
+  SET_LOADING_CONTENT: (state, loading: boolean) => {
+    state.loadingContent = loading
+  },
 
-  @Action({ commit: 'SET_ALL_CONTENTS' })
-  async getAllContents() {
+  SET_LOADING_ALL_CONTENTS: (state, loading: boolean) => {
+    state.loadingAllContents = loading
+  },
+}
+
+export const actions: ActionTree<RootState, RootState> = {
+  async getAllContents({ commit }) {
     try {
-      this.context.commit('SET_LOADING_ALL_CONTENTS', true)
+      commit('SET_LOADING_ALL_CONTENTS', true)
       const { data } = await ContentService.fetchAllContents()
-      return data.data.contents
+      commit('SET_ALL_CONTENTS', data.data.contents)
     } catch (error) {
-      console.error(error)
+      alert(error)
     } finally {
-      this.context.commit('SET_LOADING_ALL_CONTENTS', false)
+      commit('SET_LOADING_ALL_CONTENTS', false)
     }
-  }
+  },
 
-  @Action({ commit: 'SET_CONTENT' })
-  async getContentId(idContent: string) {
+  async getContentId({ commit }, idContent: string) {
     try {
-      this.context.commit('SET_LOADING_CONTENT', true)
+      commit('SET_LOADING_CONTENT', true)
       const { data } = await ContentService.fetchContentId(idContent)
-      return data.data.getContent
+      commit('SET_CONTENT', data.data.getContent)
     } catch (error) {
-      console.error(error)
+      alert(error)
     } finally {
-      this.context.commit('SET_LOADING_CONTENT', false)
+      commit('SET_LOADING_CONTENT', false)
     }
-  }
+  },
 }

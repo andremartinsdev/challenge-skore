@@ -1,33 +1,6 @@
 import { AxiosResponse } from 'axios'
 import api from '../api/contentsApi'
-
-export interface IContent {
-  id: string
-  title: string
-  type: string
-  url: string
-  embeddable: boolean
-  allow_download: boolean
-  description: string
-  created_at: number
-  updated_at: number
-}
-
-interface IResponseAllContents {
-  data: IResponseContents
-}
-
-export interface IResponseContents {
-  contents: IContent
-}
-
-interface IResponseContentId {
-  data: IContentId
-}
-
-export interface IContentId {
-  getContent: IContent[]
-}
+import { IResponseAllContents, IResponseContentId } from '~/common/types/content'
 
 class ContentService {
   fetchAllContents(): Promise<AxiosResponse<IResponseAllContents>> {

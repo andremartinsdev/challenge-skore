@@ -11,7 +11,8 @@
     "lint:prettier": "prettier --check .",
     "lint": "npm run lint:js && npm run lint:prettier",
     "lintfix": "prettier --write --list-different . && npm run lint:js -- --fix",
-    "test": "jest"
+    "test": "jest",
+    "test:updateSnap": "jest --updateSnapshot"
   },
   "dependencies": {
     "@fortawesome/fontawesome-svg-core": "^6.1.1",

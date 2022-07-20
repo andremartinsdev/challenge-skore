@@ -26,12 +26,12 @@ body {
   background: #1e3c72; /* fallback for old browsers */
 }
 
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   width: 5px;
 }
 
 ::-webkit-scrollbar-track {
-  background: #f1f1f1;
+  background: #1e3c72;
 }
 
 ::-webkit-scrollbar-thumb {
@@ -41,5 +41,20 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgb(107, 107, 107);
-}
+} */
+/* 
+@include for-phone-only {
+  ::-webkit-scrollbar {
+    width: 2px;
+  }
+
+  ::-webkit-scrollbar-track {
+    background: #1e3c72;
+  }
+
+  ::-webkit-scrollbar-thumb {
+    background: #f3f3f35b;
+    border-radius: 5px;
+  }
+} */
 </style>

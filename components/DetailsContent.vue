@@ -4,30 +4,29 @@
     <transition name="fade" mode="out-in">
       <section>
         <transition name="content-transition">
-          <Spinner v-if="loading" />
+          <Spinner v-if="loadingContent" />
           <article v-else class="content-container">
-            <div class="content-head">
-              <NuxtLink
-                to="/content"
-                style="
-                  width: 44%;
-                  font-size: 30px;
-                  display: flex;
-                  align-self: center;
-                  margin-left: 10px;
-                "
-              >
-                <span class="icon is-left">
-                  <font-awesome-icon
-                    :icon="['fa', 'circle-arrow-left']"
-                    style="color: #0a5ccf"
+            <div class="content-header">
+              <div class="content-header-icon">
+                <NuxtLink to="/content" style="" class="button-back">
+                  <img
+                    height="30px"
+                    src="~/assets/images/arrow-back.gif"
+                    alt=""
+                    srcset=""
                   />
-                </span>
-              </NuxtLink>
-              <div
-                style="width: 50%; display: flex; justify-content: flext-start"
-              >
+                </NuxtLink>
+              </div>
+              <div class="content-header-text">
                 <p class="fw-300">Conteúdo</p>
+              </div>
+
+              <div class="content-header-search">
+                <img src="~/assets/images/search.gif" alt="" />
+
+                <a class="search-link" @click="searchAbout"
+                  >Mais conteúdo sobre o assunto</a
+                >
               </div>
             </div>
             <div class="content-body">
@@ -58,7 +57,7 @@
                     <span class="link" @click="navigate"
                       >Visitar Site
                       <span class="icon is-left">
-                        <font-awesome-icon :icon="['fa', 'arrow-pointer']" />
+                        <!-- <fontawesomeicon :icon="['fa', 'arrow-pointer']" /> -->
                       </span>
                     </span>
                   </div>
@@ -66,22 +65,8 @@
               </div>
             </div>
             <div class="content-footer">
-              <NuxtLink
-                to="/content"
-                style="
-                  width: 44%;
-                  font-size: 30px;
-                  display: flex;
-                  align-self: center;
-                  margin-left: 10px;
-                "
-              >
-              </NuxtLink>
-              <div
-                style="width: 50%; display: flex; justify-content: flext-start"
-              >
-                <p class="fw-300">{{ convertTimestamp }}</p>
-              </div>
+              <p class="fw-300">{{ dataCreated }}</p>
+              <p class="fw-300">{{ dataUpdated }}</p>
             </div>
           </article>
         </transition>
@@ -92,9 +77,9 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { getModule } from 'vuex-module-decorators'
-import { IContent } from '~/services/contents'
-import mymodule from '~/store/Contents'
+import { mapActions, mapState, mapGetters } from 'vuex'
+import { IContent } from '~/common/types/content'
+
 export default Vue.extend({
   name: 'DetailsS',
   data() {
@@ -104,6 +89,9 @@ export default Vue.extend({
   },
 
   computed: {
+    ...mapState('Contents', ['loadingContent']),
+    ...mapGetters('Contents', ['contentGetter']),
+
     embedUrlYoutube(): string {
       return this.content.url.replace('watch?v=', 'embed/')
     },
@@ -112,18 +100,25 @@ export default Vue.extend({
       return this.content.description !== ''
     },
 
-    loading(): boolean {
-      return getModule(mymodule, this.$store).loadingContent
-    },
-
-    convertTimestamp(): string {
+    dataCreated(): string {
       const date = new Date(this.content.created_at)
       const day = this.addZero(date.getDay())
       const month = this.addZero(date.getMonth())
       const year = this.addZero(date.getFullYear())
 
       const data = day + '/' + month + '/' + year
-      return data
+      return 'Conteúdo criado em : ' + data
+    },
+
+    dataUpdated(): string {
+      if (!this.content.updated_at) return 'Conteúdo não atualizado'
+      const date = new Date(this.content.updated_at)
+      const day = this.addZero(date.getDay())
+      const month = this.addZero(date.getMonth())
+      const year = this.addZero(date.getFullYear())
+
+      const data = day + '/' + month + '/' + year
+      return 'Conteúdo atualizado em : ' + data
     },
 
     hasEmbeddable(): boolean {
@@ -133,17 +128,26 @@ export default Vue.extend({
     },
   },
   created() {
-    this.getvideo()
+    this.fetchContentId()
   },
 
   methods: {
+    ...mapActions('Contents', ['getContentId']),
+
+    searchAbout() {
+      window.open(
+        'https://www.google.com/search?q=' + this.content.title,
+        '_blank'
+      )
+    },
+
     addZero(dataNumber: number) {
       return dataNumber < 10 ? '0' + dataNumber : dataNumber
     },
 
-    async getvideo() {
-      await getModule(mymodule, this.$store).getContentId(this.$route.params.id)
-      this.content = getModule(mymodule, this.$store).content
+    async fetchContentId() {
+      await this.getContentId(this.$route.params.id)
+      this.content = this.contentGetter;
     },
 
     navigate() {
@@ -154,15 +158,6 @@ export default Vue.extend({
 </script>
 
 <style lang="scss" scoped>
-.content-transition-enter-active,
-.content-transition-leave-active {
-  transition: opacity 0.8s;
-}
-.content-transition-enter,
-.content-transition-leave-active {
-  opacity: 0;
-}
-
 .content-footer {
   background: #00d2ff;
   background: -webkit-linear-gradient(to left, #3a7bd5, #00d2ff);
@@ -170,10 +165,11 @@ export default Vue.extend({
   border-radius: 10px;
   box-shadow: 0 3px 6px rgba(black, 0.16), 0 3px 6px rgba(black, 0.23);
   display: flex;
+  justify-content: space-evenly;
   margin-top: 10px;
+  width: 100%;
 
   p {
-    padding: 5px 20px;
     margin: 10px;
     color: #ffff;
     font-size: 15px;
@@ -190,7 +186,7 @@ section {
     width: 80%;
     border-radius: 10px;
 
-    .content-head {
+    .content-header {
       background: #00d2ff;
       background: -webkit-linear-gradient(to left, #3a7bd5, #00d2ff);
       background: linear-gradient(to left, #3a7bd5, #00d2ff);
@@ -199,11 +195,54 @@ section {
       display: flex;
       margin-bottom: 10px;
 
+      .content-header-icon {
+        width: 33%;
+        display: flex;
+        align-items: center;
+        img {
+          height: 50px;
+          transition: all 0.5s;
+          transform: rotate(180deg);
+        }
+      }
+
+      .content-header-text {
+        display: flex;
+        justify-content: center;
+        width: 33%;
+        font-size: 18px;
+      }
+
+      .content-header-search {
+        display: flex;
+        font-size: 15px;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        width: 33%;
+
+        .search-link {
+          cursor: pointer;
+        }
+
+        img {
+          height: 28px;
+          margin-right: 5px;
+        }
+      }
+
+      .button-back {
+        width: 65%;
+        font-size: 30px;
+        display: flex;
+        align-self: center;
+        margin-left: 10px;
+      }
+
       p {
         padding: 5px 20px;
         margin: 10px;
         color: #ffff;
-        font-size: 20px;
         text-align: center;
       }
     }
@@ -294,22 +333,83 @@ section {
       }
     }
   }
+}
 
+@include for-phone-only {
+  section {
+    .content-container {
+      overflow: auto;
+      width: 95%;
+      .content-header {
+        .content-header-icon {
+          width: 15%;
+          img {
+            height: 35px;
+          }
+        }
+
+        .content-header-text {
+          display: none;
+        }
+
+        .content-header-search {
+          display: flex;
+          justify-content: center;
+          width: 67%;
+          font-size: 13px;
+          img {
+            height: 17px;
+          }
+        }
+        p {
+          font-size: 17px;
+          padding: 3px;
+          margin: 5px;
+        }
+      }
+
+      .content-data-container {
+        flex-direction: column;
+        width: 100%;
+        /* height: 'auto'; */
+
+        .content-data-description {
+          width: 100%;
+          height: 50%;
+        }
+
+        .content-data-embeddable {
+          width: 100%;
+          height: 50%;
+
+          .content-image {
+            width: 80%;
+            height: 300px;
+            margin-top: -50px;
+          }
+
+          .content-iframe {
+            height: 300px;
+            iframe {
+              width: 90%;
+              height: 90%;
+            }
+          }
+        }
+      }
+    }
+  }
   ::-webkit-scrollbar {
-    width: 10px;
+    width: 2px;
   }
 
   ::-webkit-scrollbar-track {
-    background: #f1f1f1;
+    background: #1e3c72;
   }
 
   ::-webkit-scrollbar-thumb {
-    background: #3a7bd5;
+    background: #f3f3f35b;
     border-radius: 5px;
-  }
-
-  ::-webkit-scrollbar-thumb:hover {
-    background: rgb(107, 107, 107);
   }
 }
 </style>

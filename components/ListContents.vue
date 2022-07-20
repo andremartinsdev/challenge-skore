@@ -4,11 +4,25 @@
     <transition name="fade" mode="out-in">
       <section>
         <transition name="content-transition">
-          <Spinner v-if="loading" />
+          <Spinner v-if="loadingAllContents" />
           <article v-else>
             <div class="content-container">
               <div class="content-head">
                 <p>Lista de Conteúdos</p>
+              </div>
+
+              <div class="content-order">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/6631/6631748.png"
+                  alt=""
+                  srcset=""
+                />
+                <p v-if="!orderByMinor" @click="orderbyDate()">
+                  Ordenar por Conteúdo mais recente
+                </p>
+                <p v-else @click="orderbyDate()">
+                  Ordenar por Conteúdo menos recente
+                </p>
               </div>
 
               <div class="content-body">
@@ -20,7 +34,12 @@
                   <NuxtLink :to="'/content/' + content.id">
                     <span> {{ content.title }}</span>
                     <span class="icon is-left">
-                      <font-awesome-icon :icon="['fa', 'arrow-right']" />
+                      <img
+                        height="30px"
+                        src="~/assets/images/arrow.png"
+                        alt=""
+                        srcset=""
+                      />
                     </span>
                     <i class="fa fa-angle-right"></i>
                   </NuxtLink>
@@ -36,46 +55,53 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { getModule } from 'vuex-module-decorators'
-import { IContent } from '~/services/contents'
-import mymodule from '~/store/Contents'
+import { mapActions, mapState, mapGetters } from 'vuex'
+import { IContent } from '~/common/types/content'
+
 export default Vue.extend({
   name: 'ListContents',
+
   data() {
     return {
       allContents: [] as IContent[],
+      orderByMinor: false,
     }
   },
 
   computed: {
-    loading(): boolean {
-      return getModule(mymodule, this.$store).loadingAllContents
-    },
+    ...mapState('Contents', ['loadingAllContents']),
+    ...mapGetters('Contents', [
+      'allContentsGetter',
+      'orderbyDateGetter',
+      'orderbyDateMinorGetter',
+    ]),
   },
 
   created() {
     this.fetchAllContents()
   },
   methods: {
+    ...mapActions('Contents', ['getAllContents']),
+
+    orderbyDate() {
+      if (this.orderByMinor) {
+        this.allContents = this.orderbyDateMinorGetter
+        this.orderByMinor = !this.orderByMinor
+        return
+      }
+      this.allContents = this.orderbyDateGetter
+      this.orderByMinor = !this.orderByMinor
+    },
+
     async fetchAllContents() {
-      await getModule(mymodule, this.$store).getAllContents()
-      this.allContents = getModule(mymodule, this.$store).allContents
+      await this.getAllContents()
+      this.allContents = this.allContentsGetter
     },
   },
 })
 </script>
 
 <style lang="scss" scoped>
-
-.content-transition-enter-active,
-.content-transition-leave-active {
-  transition: opacity 0.8s;
-}
-.content-transition-enter,
-.content-transition-leave-active {
-  opacity: 0;
-}
-
 section {
   display: flex;
   justify-content: center;
@@ -90,6 +116,24 @@ section {
 
     .content-container {
       width: 70%;
+
+      .content-order {
+        display: flex;
+        align-items: center;
+        color: #ffff;
+        margin-left: 15px;
+        img {
+          height: 30px;
+          margin-right: 15px;
+        }
+        p {
+          transition: all 0.5s;
+          &:hover {
+            cursor: pointer;
+            color: #6296dd;
+          }
+        }
+      }
 
       .content-head {
         background: #00d2ff;
@@ -140,6 +184,20 @@ section {
             align-items: center;
             margin: 0 10px;
           }
+        }
+      }
+    }
+  }
+}
+
+@include for-phone-only {
+  section {
+    article {
+      overflow: auto;
+      .content-container {
+        width: 100%;
+        .content-head {
+          margin: 5px;
         }
       }
     }

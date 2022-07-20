@@ -12,16 +12,31 @@ localVue.use(Vuex)
 describe('DetailsContent.vue', () => {
   let actions
   let store
+  let getters
 
   beforeEach(() => {
     actions = {
       getContentId: jest.fn(),
+    }
+    getters = {
+      contentGetter: jest.fn().mockReturnValue({
+        id: '',
+        title: '',
+        type: '',
+        url: '',
+        embeddable: false,
+        allow_download: false,
+        description: '',
+        created_at: 0,
+        updated_at: 0,
+      }),
     }
     store = new Store({
       modules: {
         Contents: {
           namespaced: true,
           actions,
+          getters,
           state,
         },
       },

@@ -24,7 +24,7 @@ body {
   background: #1e3c72; /* fallback for old browsers */
 }
 
-::-webkit-scrollbar {
+/* ::-webkit-scrollbar {
   width: 5px;
 }
 
@@ -39,5 +39,5 @@ body {
 
 ::-webkit-scrollbar-thumb:hover {
   background: rgb(107, 107, 107);
-}
+} */
 </style>

@@ -4,7 +4,7 @@
     <transition name="fade" mode="out-in">
       <section>
         <transition name="content-transition">
-          <Spinner v-if="loading" />
+          <Spinner v-if="loadingAllContents" />
           <article v-else>
             <div class="content-container">
               <div class="content-head">
@@ -20,7 +20,12 @@
                   <NuxtLink :to="'/content/' + content.id">
                     <span> {{ content.title }}</span>
                     <span class="icon is-left">
-                      <font-awesome-icon :icon="['fa', 'arrow-right']" />
+                      <img
+                        height="30px"
+                        src="https://cdn-icons.flaticon.com/png/512/4493/premium/4493874.png?token=exp=1658273681~hmac=1ee5c379d2e5002490924465af4089ed"
+                        alt=""
+                        srcset=""
+                      />
                     </span>
                     <i class="fa fa-angle-right"></i>
                   </NuxtLink>
@@ -36,45 +41,28 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { getModule } from 'vuex-module-decorators'
-import { IContent } from '~/services/contents'
-import mymodule from '~/store/Contents'
+import { mapActions, mapState } from 'vuex'
 export default Vue.extend({
   name: 'ListContents',
-  data() {
-    return {
-      allContents: [] as IContent[],
-    }
-  },
 
   computed: {
-    loading(): boolean {
-      return getModule(mymodule, this.$store).loadingAllContents
-    },
+    ...mapState('Contents', ['allContents', 'loadingAllContents']),
   },
 
   created() {
     this.fetchAllContents()
   },
   methods: {
+    ...mapActions('Contents', ['getAllContents']),
+
     async fetchAllContents() {
-      await getModule(mymodule, this.$store).getAllContents()
-      this.allContents = getModule(mymodule, this.$store).allContents
+      await this.getAllContents()
     },
   },
 })
 </script>
 
 <style lang="scss" scoped>
-.content-transition-enter-active,
-.content-transition-leave-active {
-  transition: opacity 0.8s;
-}
-.content-transition-enter,
-.content-transition-leave-active {
-  opacity: 0;
-}
-
 section {
   display: flex;
   justify-content: center;
@@ -156,5 +144,19 @@ section {
 }
 .hover:hover {
   --_p: 0%;
+}
+
+@include for-phone-only {
+  section {
+    article {
+      overflow: auto;
+      .content-container {
+        width: 100%;
+        .content-head {
+          margin: 5px;
+        }
+      }
+    }
+  }
 }
 </style>

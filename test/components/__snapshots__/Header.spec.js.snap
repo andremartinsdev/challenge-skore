@@ -1,0 +1,10 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`Header.vue renders properly 1`] = `
+"<div>
+  <header class=\\"header-conteiner\\">
+    <div><span class=\\"header-content fw-300\\">Conteúdos</span> <span class=\\"header-content fw-600\\">LGPD</span></div>
+    <div><img src=\\"~/assets/images/lgpd.png\\" alt=\\"\\" srcset=\\"\\" class=\\"header-imagen\\"></div>
+  </header>
+</div>"
+`;

@@ -22,7 +22,7 @@ describe('Service content.ts', () => {
     expect(api.post).toHaveBeenCalledTimes(1)
   })
 
-  test('should return an error cannot query field', async () => {
+  test('should return a specific content by id', async () => {
     const response = { status: 200, data: { responseContent } }
 
     mockAxiosPost.mockImplementationOnce(() => Promise.resolve(response))

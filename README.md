@@ -15,6 +15,14 @@ $ npm run start
 
 # generate static project
 $ npm run generate
+
+
+# run tests units
+$ npm run test
+
+# clear snapshot
+$ npm run test:updateSnap
+
 ```
 
 For detailed explanation on how things work, check out the [documentation](https://nuxtjs.org).
@@ -66,3 +74,13 @@ More information about the usage of this directory in [the documentation](https:
 This directory contains your Vuex store files. Creating a file in this directory automatically activates Vuex.
 
 More information about the usage of this directory in [the documentation](https://nuxtjs.org/docs/2.x/directory-structure/store).
+
+
+
+### `Funcionalidades da aplicação`
+
+Aplicação criada para apresentar conteúdos sobre LGPD
+
+na rota '/content' lista todos os conteúdos, temos a opção de "Ordenar por conteúdo mais recente" e podemos selecionar uma das listagens para ver detalhes.
+
+na rota /content/id temos acesso aos detalhes do conteudo.

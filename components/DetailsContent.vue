@@ -9,11 +9,24 @@
             <div class="content-header">
               <div class="content-header-icon">
                 <NuxtLink to="/content" style="" class="button-back">
-                  Voltar
+                  <img
+                    height="30px"
+                    src="~/assets/images/arrow-back.gif"
+                    alt=""
+                    srcset=""
+                  />
                 </NuxtLink>
               </div>
               <div class="content-header-text">
                 <p class="fw-300">Conteúdo</p>
+              </div>
+
+              <div class="content-header-search">
+                <img src="~/assets/images/search.gif" alt="" />
+
+                <a class="search-link" @click="searchAbout"
+                  >Mais conteúdo sobre o assunto</a
+                >
               </div>
             </div>
             <div class="content-body">
@@ -64,13 +77,20 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState, mapGetters } from 'vuex'
+import { IContent } from '~/common/types/content'
 
 export default Vue.extend({
   name: 'DetailsS',
+  data() {
+    return {
+      content: {} as IContent,
+    }
+  },
 
   computed: {
-    ...mapState('Contents', ['content', 'loadingContent']),
+    ...mapState('Contents', ['loadingContent']),
+    ...mapGetters('Contents', ['contentGetter']),
 
     embedUrlYoutube(): string {
       return this.content.url.replace('watch?v=', 'embed/')
@@ -108,18 +128,26 @@ export default Vue.extend({
     },
   },
   created() {
-    this.getvideo()
+    this.fetchContentId()
   },
 
   methods: {
     ...mapActions('Contents', ['getContentId']),
 
+    searchAbout() {
+      window.open(
+        'https://www.google.com/search?q=' + this.content.title,
+        '_blank'
+      )
+    },
+
     addZero(dataNumber: number) {
       return dataNumber < 10 ? '0' + dataNumber : dataNumber
     },
 
-    async getvideo() {
+    async fetchContentId() {
       await this.getContentId(this.$route.params.id)
+      this.content = this.contentGetter;
     },
 
     navigate() {
@@ -168,13 +196,39 @@ section {
       margin-bottom: 10px;
 
       .content-header-icon {
-        width: 45%;
+        width: 33%;
+        display: flex;
+        align-items: center;
+        img {
+          height: 50px;
+          transition: all 0.5s;
+          transform: rotate(180deg);
+        }
       }
 
       .content-header-text {
         display: flex;
-        justify-content: flex-start;
-        width: 65%;
+        justify-content: center;
+        width: 33%;
+        font-size: 18px;
+      }
+
+      .content-header-search {
+        display: flex;
+        font-size: 15px;
+        justify-content: center;
+        align-items: center;
+        color: #fff;
+        width: 33%;
+
+        .search-link {
+          cursor: pointer;
+        }
+
+        img {
+          height: 28px;
+          margin-right: 5px;
+        }
       }
 
       .button-back {
@@ -189,7 +243,6 @@ section {
         padding: 5px 20px;
         margin: 10px;
         color: #ffff;
-        font-size: 20px;
         text-align: center;
       }
     }
@@ -289,13 +342,24 @@ section {
       width: 95%;
       .content-header {
         .content-header-icon {
-          width: 38%;
+          width: 15%;
+          img {
+            height: 35px;
+          }
         }
 
         .content-header-text {
+          display: none;
+        }
+
+        .content-header-search {
           display: flex;
-          justify-content: flex-start;
-          width: 65%;
+          justify-content: center;
+          width: 67%;
+          font-size: 13px;
+          img {
+            height: 17px;
+          }
         }
         p {
           font-size: 17px;

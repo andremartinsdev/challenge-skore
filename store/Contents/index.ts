@@ -22,8 +22,21 @@ export const state = (): IContentState => ({
 export type RootState = ReturnType<typeof state>
 
 export const getters: GetterTree<RootState, RootState> = {
-  allContents: (state): IContent[] => state.allContents,
-  content: (state): IContent => state.content,
+  allContentsGetter: (state): IContent[] => state.allContents,
+  contentGetter: (state): IContent => state.content,
+  orderbyDateGetter: (state): IContent[] => {
+    const contentsSorted = [...state.allContents]
+    contentsSorted.sort((dateA, dateB) => dateA.created_at - dateB.created_at)
+    return contentsSorted
+  },
+
+  orderbyDateMinorGetter: (state): IContent[] => {
+    const contentsSorted = [...state.allContents]
+    contentsSorted.sort((a, b) => {
+      return new Date(b.created_at).getTime() - new Date(a.created_at).getTime()
+    })
+    return contentsSorted
+  },
 }
 
 export const mutations: MutationTree<RootState> = {

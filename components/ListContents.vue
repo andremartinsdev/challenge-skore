@@ -11,6 +11,20 @@
                 <p>Lista de Conteúdos</p>
               </div>
 
+              <div class="content-order">
+                <img
+                  src="https://cdn-icons-png.flaticon.com/512/6631/6631748.png"
+                  alt=""
+                  srcset=""
+                />
+                <p v-if="!orderByMinor" @click="orderbyDate()">
+                  Ordenar por Conteúdo mais recente
+                </p>
+                <p v-else @click="orderbyDate()">
+                  Ordenar por Conteúdo menos recente
+                </p>
+              </div>
+
               <div class="content-body">
                 <div
                   v-for="content in allContents"
@@ -22,7 +36,7 @@
                     <span class="icon is-left">
                       <img
                         height="30px"
-                        src="https://cdn-icons.flaticon.com/png/512/4493/premium/4493874.png?token=exp=1658273681~hmac=1ee5c379d2e5002490924465af4089ed"
+                        src="~/assets/images/arrow.png"
                         alt=""
                         srcset=""
                       />
@@ -41,12 +55,26 @@
 
 <script lang="ts">
 import Vue from 'vue'
-import { mapActions, mapState } from 'vuex'
+import { mapActions, mapState, mapGetters } from 'vuex'
+import { IContent } from '~/common/types/content'
+
 export default Vue.extend({
   name: 'ListContents',
 
+  data() {
+    return {
+      allContents: [] as IContent[],
+      orderByMinor: false,
+    }
+  },
+
   computed: {
-    ...mapState('Contents', ['allContents', 'loadingAllContents']),
+    ...mapState('Contents', ['loadingAllContents']),
+    ...mapGetters('Contents', [
+      'allContentsGetter',
+      'orderbyDateGetter',
+      'orderbyDateMinorGetter',
+    ]),
   },
 
   created() {
@@ -55,8 +83,19 @@ export default Vue.extend({
   methods: {
     ...mapActions('Contents', ['getAllContents']),
 
+    orderbyDate() {
+      if (this.orderByMinor) {
+        this.allContents = this.orderbyDateMinorGetter
+        this.orderByMinor = !this.orderByMinor
+        return
+      }
+      this.allContents = this.orderbyDateGetter
+      this.orderByMinor = !this.orderByMinor
+    },
+
     async fetchAllContents() {
       await this.getAllContents()
+      this.allContents = this.allContentsGetter
     },
   },
 })
@@ -77,6 +116,24 @@ section {
 
     .content-container {
       width: 70%;
+
+      .content-order {
+        display: flex;
+        align-items: center;
+        color: #ffff;
+        margin-left: 15px;
+        img {
+          height: 30px;
+          margin-right: 15px;
+        }
+        p {
+          transition: all 0.5s;
+          &:hover {
+            cursor: pointer;
+            color: #6296dd;
+          }
+        }
+      }
 
       .content-head {
         background: #00d2ff;
@@ -133,19 +190,6 @@ section {
   }
 }
 
-.hover {
-  color: #fff;
-  border-radius: 10px;
-
-  background: linear-gradient(90deg, rgba(236, 236, 236, 0.616) 50%, #fff 0)
-    var(--_p, 100%) / 200% no-repeat;
-
-  transition: 0.6s;
-}
-.hover:hover {
-  --_p: 0%;
-}
-
 @include for-phone-only {
   section {
     article {
@@ -158,5 +202,18 @@ section {
       }
     }
   }
+}
+
+.hover {
+  color: #fff;
+  border-radius: 10px;
+
+  background: linear-gradient(90deg, rgba(236, 236, 236, 0.616) 50%, #fff 0)
+    var(--_p, 100%) / 200% no-repeat;
+
+  transition: 0.6s;
+}
+.hover:hover {
+  --_p: 0%;
 }
 </style>
